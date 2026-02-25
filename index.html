@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>放马</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        /* 启动页 */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        .horse-icon {
+            font-size: 80px;
+            animation: breathe 3s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .app-name {
+            color: white;
+            font-size: 32px;
+            margin-top: 20px;
+            font-weight: 300;
+            letter-spacing: 8px;
+        }
+        
+        .tagline {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        /* 主界面 */
+        #main {
+            display: none;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* 顶部状态栏 */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .streak {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+            font-size: 14px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .streak-fire {
+            font-size: 18px;
+        }
+        
+        .coins {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #FFD700;
+            font-size: 14px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        /* 卡片堆 */
+        .card-stack {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            max-width: 350px;
+            height: 500px;
+        }
+        
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: grab;
+        }
+        
+        .card:nth-child(1) { z-index: 3; }
+        .card:nth-child(2) { 
+            z-index: 2; 
+            transform: scale(0.95) translateY(15px);
+            opacity: 0.7;
+        }
+        .card:nth-child(3) { 
+            z-index: 1; 
+            transform: scale(0.9) translateY(30px);
+            opacity: 0.4;
+        }
+        
+        .card-type {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            align-self: flex-start;
+        }
+        
+        .card-type.aha { background: #FFE4E1; color: #FF6B6B; }
+        .card-type.music { background: #E3F2FD; color: #2196F3; }
+        .card-type.slang { background: #F3E5F5; color: #9C27B0; }
+        
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .card-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .card-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .card-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* 放马中界面 */
+        #session {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: white;
+        }
+        
+        .timer-ring {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .timer-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: white;
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .timer-text {
+            font-size: 48px;
+            font-weight: 200;
+            letter-spacing: 2px;
+        }
+        
+        .timer-label {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .session-content {
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .session-quote {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        .session-author {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .session-controls {
+            position: absolute;
+            bottom: 60px;
+            display: flex;
+            gap: 40px;
+        }
+        
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* 底部导航 */
+        .nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-item {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .nav-item.active {
+            color: white;
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+        }
+        
+        /* 提示 */
+        .swipe-hint {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 启动页 -->
+    <div id="splash">
+        <div class="horse-icon">🐎</div>
+        <div class="app-name">放马</div>
+        <div class="tagline">每天10分钟，给精神放个假</div>
+    </div>
+    
+    <!-- 主界面 -->
+    <div id="main">
+        <div class="header">
+            <div class="streak">
+                <span class="streak-fire">🔥</span>
+                <span id="streak-count">3</span>
+            </div>
+            <div class="coins">
+                <span>🪙</span>
+                <span id="coin-count">128</span>
+            </div>
+        </div>
+        
+        <div class="card-stack" id="cardStack">
+            <div class="card" data-type="aha">
+                <span class="card-type aha">💡 Aha Moment</span>
+                <div class="card-content">
+                    <div class="card-icon">✨</div>
+                    <div class="card-title">"人生就像骑自行车，想保持平衡就得往前走。"</div>
+                    <div class="card-desc">—— 爱因斯坦</div>
+                </div>
+                <div class="card-hint">上滑开始放马</div>
+            </div>
+            <div class="card" data-type="music">
+                <span class="card-type music">🎵 安静内观</span>
+                <div class="card-content">
+                    <div class="card-icon">🌧️</div>
+                    <div class="card-title">雨声白噪音</div>
+                    <div class="card-desc">让雨声洗涤你的思绪，什么都不做，只是和自己待在一起</div>
+                </div>
+                <div class="card-hint">上滑开始放马</div>
+            </div>
+            <div class="card" data-type="slang">
+                <span class="card-type slang">🗣️ 每日俚语</span>
+                <div class="card-content">
+                    <div class="card-icon">🇺🇸</div>
+                    <div class="card-title">"Break a leg"</div>
+                    <div class="card-desc">不是"摔断腿"，而是"祝你好运"！<br>源自剧场传统，直接祝好运反而会倒霉</div>
+                </div>
+                <div class="card-hint">上滑开始放马</div>
+            </div>
+        </div>
+        
+        <div class="swipe-hint">👆 上滑开始 · 👈 左滑跳过 · 👉 右滑收藏</div>
+        
+        <div class="nav">
+            <div class="nav-item active">
+                <span class="nav-icon">🐎</span>
+                <span>放马</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">🎯</span>
+                <span>成就</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">📚</span>
+                <span>马厩</span>
+            </div>
+            <div class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 放马中界面 -->
+    <div id="session">
+        <div class="timer-ring">
+            <div class="timer-progress"></div>
+            <div class="timer-text" id="timer">10:00</div>
+            <div class="timer-label">放马中</div>
+        </div>
+        
+        <div class="session-content">
+            <div class="session-quote" id="session-quote">"人生就像骑自行车，想保持平衡就得往前走。"</div>
+            <div class="session-author" id="session-author">—— 爱因斯坦</div>
+        </div>
+        
+        <div class="session-controls">
+            <button class="control-btn" onclick="togglePause()">⏸️</button>
+            <button class="control-btn" onclick="endSession()">✅</button>
+            <button class="control-btn" onclick="shareContent()">📤</button>
+        </div>
+    </div>
+
+    <script>
+        // 启动页动画
+        setTimeout(() => {
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                document.getElementById('main').style.display = 'block';
+            }, 500);
+        }, 2500);
+        
+        // 卡片数据
+        const cardData = [
+            { type: 'aha', icon: '✨', title: '"人生就像骑自行车，想保持平衡就得往前走。"', desc: '—— 爱因斯坦' },
+            { type: 'music', icon: '🌧️', title: '雨声白噪音', desc: '让雨声洗涤你的思绪，什么都不做，只是和自己待在一起' },
+            { type: 'slang', icon: '🇺🇸', title: '"Break a leg"', desc: '不是"摔断腿"，而是"祝你好运"！<br>源自剧场传统，直接祝好运反而会倒霉' },
+            { type: 'aha', icon: '😄', title: '为什么程序员分不清万圣节和圣诞节？', desc: '因为 Oct 31 = Dec 25<br>(八进制31 = 十进制25)' },
+            { type: 'music', icon: '🎹', title: '钢琴轻音乐', desc: '让音符带你漂浮，10分钟后你会感谢现在的自己' },
+            { type: 'slang', icon: '🇬🇧', title: '"It\'s raining cats and dogs"', desc: '下猫下狗？不，是"倾盆大雨"！<br>源自17世纪英国，当时街上真的有很多流浪动物' },
+        ];
+        
+        let currentCardIndex = 0;
+        let sessionTime = 600; // 10分钟
+        let timerInterval;
+        let isPaused = false;
+        
+        // 卡片滑动
+        const cardStack = document.getElementById('cardStack');
+        let startY = 0;
+        let startX = 0;
+        
+        cardStack.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+        });
+        
+        cardStack.addEventListener('touchend', (e) => {
+            const endY = e.changedTouches[0].clientY;
+            const endX = e.changedTouches[0].clientX;
+            const diffY = startY - endY;
+            const diffX = endX - startX;
+            
+            const cards = cardStack.querySelectorAll('.card');
+            const currentCard = cards[0];
+            
+            if (diffY > 80) {
+                // 上滑 - 开始放马
+                startSession(currentCard);
+            } else if (diffX < -80) {
+                // 左滑 - 跳过
+                currentCard.style.transform = 'translateX(-120%) rotate(-20deg)';
+                currentCard.style.opacity = '0';
+                setTimeout(() => nextCard(), 300);
+            } else if (diffX > 80) {
+                // 右滑 - 收藏
+                currentCard.style.transform = 'translateX(120%) rotate(20deg)';
+                currentCard.style.opacity = '0';
+                // 这里可以加收藏逻辑
+                setTimeout(() => nextCard(), 300);
+            }
+        });
+        
+        // 鼠标支持（桌面测试）
+        let isDragging = false;
+        cardStack.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startY = e.clientY;
+            startX = e.clientX;
+        });
+        
+        cardStack.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            const diffY = startY - e.clientY;
+            const diffX = e.clientX - startX;
+            
+            const cards = cardStack.querySelectorAll('.card');
+            const currentCard = cards[0];
+            
+            if (diffY > 80) {
+                startSession(currentCard);
+            } else if (diffX < -80) {
+                currentCard.style.transform = 'translateX(-120%) rotate(-20deg)';
+                currentCard.style.opacity = '0';
+                setTimeout(() => nextCard(), 300);
+            } else if (diffX > 80) {
+                currentCard.style.transform = 'translateX(120%) rotate(20deg)';
+                currentCard.style.opacity = '0';
+                setTimeout(() => nextCard(), 300);
+            }
+        });
+        
+        function nextCard() {
+            const cards = cardStack.querySelectorAll('.card');
+            cards[0].remove();
+            
+            currentCardIndex = (currentCardIndex + 1) % cardData.length;
+            const nextData = cardData[(currentCardIndex + 2) % cardData.length];
+            
+            const newCard = document.createElement('div');
+            newCard.className = 'card';
+            newCard.dataset.type = nextData.type;
+            
+            const typeLabels = { aha: '💡 Aha Moment', music: '🎵 安静内观', slang: '🗣️ 每日俚语' };
+            const typeClasses = { aha: 'aha', music: 'music', slang: 'slang' };
+            
+            newCard.innerHTML = `
+                <span class="card-type ${typeClasses[nextData.type]}">${typeLabels[nextData.type]}</span>
+                <div class="card-content">
+                    <div class="card-icon">${nextData.icon}</div>
+                    <div class="card-title">${nextData.title}</div>
+                    <div class="card-desc">${nextData.desc}</div>
+                </div>
+                <div class="card-hint">上滑开始放马</div>
+            `;
+            
+            cardStack.appendChild(newCard);
+        }
+        
+        function startSession(card) {
+            const type = card.dataset.type;
+            const data = cardData[currentCardIndex];
+            
+            document.getElementById('session-quote').textContent = data.title;
+            document.getElementById('session-author').innerHTML = data.desc;
+            
+            document.getElementById('main').style.display = 'none';
+            document.getElementById('session').style.display = 'flex';
+            
+            startTimer();
+        }
+        
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    sessionTime--;
+                    updateTimerDisplay();
+                    
+                    if (sessionTime <= 0) {
+                        endSession();
+                    }
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(sessionTime / 60);
+            const seconds = sessionTime % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function togglePause() {
+            isPaused = !isPaused;
+            document.querySelector('.control-btn').textContent = isPaused ? '▶️' : '⏸️';
+        }
+        
+        function endSession() {
+            clearInterval(timerInterval);
+            sessionTime = 600;
+            isPaused = false;
+            
+            // 增加连胜和金币
+            document.getElementById('streak-count').textContent = 
+                parseInt(document.getElementById('streak-count').textContent) + 1;
+            document.getElementById('coin-count').textContent = 
+                parseInt(document.getElementById('coin-count').textContent) + 10;
+            
+            document.getElementById('session').style.display = 'none';
+            document.getElementById('main').style.display = 'block';
+            
+            // 提示完成
+            alert('🎉 放马完成！+10马币');
+        }
+        
+        function shareContent() {
+            alert('📤 分享功能（可生成精美卡片图片）');
+        }
+    </script>
+</body>
+</html>
