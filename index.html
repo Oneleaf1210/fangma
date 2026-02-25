@@ -128,6 +128,43 @@
             flex-direction: column;
             transition: transform 0.3s ease, opacity 0.3s ease;
             cursor: grab;
+            user-select: none;
+            touch-action: none;
+        }
+        
+        .card.dragging {
+            transition: none;
+            cursor: grabbing;
+        }
+        
+        .card-hint-overlay {
+            position: absolute;
+            top: 50%;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.2s ease;
+            z-index: 100;
+            border: 3px solid white;
+        }
+        
+        .card-hint-overlay.skip {
+            left: 20px;
+            background: rgba(255, 71, 87, 0.9);
+        }
+        
+        .card-hint-overlay.like {
+            right: 20px;
+            background: rgba(46, 213, 115, 0.9);
+        }
+        
+        .card-hint-overlay.show {
+            transform: translateY(-50%) scale(1);
         }
         
         .card:nth-child(1) { z-index: 3; }
@@ -452,79 +489,159 @@
         ];
         
         let currentCardIndex = 0;
-        let sessionTime = 600; // 10分钟
+        let sessionTime = 600;
         let timerInterval;
         let isPaused = false;
         
-        // 卡片滑动
+        // 滑动状态
         const cardStack = document.getElementById('cardStack');
-        let startY = 0;
-        let startX = 0;
-        
-        cardStack.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-            startX = e.touches[0].clientX;
-        });
-        
-        cardStack.addEventListener('touchend', (e) => {
-            const endY = e.changedTouches[0].clientY;
-            const endX = e.changedTouches[0].clientX;
-            const diffY = startY - endY;
-            const diffX = endX - startX;
-            
-            const cards = cardStack.querySelectorAll('.card');
-            const currentCard = cards[0];
-            
-            if (diffY > 80) {
-                // 上滑 - 开始放马
-                startSession(currentCard);
-            } else if (diffX < -80) {
-                // 左滑 - 跳过
-                currentCard.style.transform = 'translateX(-120%) rotate(-20deg)';
-                currentCard.style.opacity = '0';
-                setTimeout(() => nextCard(), 300);
-            } else if (diffX > 80) {
-                // 右滑 - 收藏
-                currentCard.style.transform = 'translateX(120%) rotate(20deg)';
-                currentCard.style.opacity = '0';
-                // 这里可以加收藏逻辑
-                setTimeout(() => nextCard(), 300);
-            }
-        });
-        
-        // 鼠标支持（桌面测试）
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
         let isDragging = false;
-        cardStack.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startY = e.clientY;
-            startX = e.clientX;
+        let currentCard = null;
+        let skipHint = null;
+        let likeHint = null;
+        
+        // 创建提示元素
+        function createHints(card) {
+            if (skipHint) skipHint.remove();
+            if (likeHint) likeHint.remove();
+            
+            skipHint = document.createElement('div');
+            skipHint.className = 'card-hint-overlay skip';
+            skipHint.innerHTML = '👎';
+            card.appendChild(skipHint);
+            
+            likeHint = document.createElement('div');
+            likeHint.className = 'card-hint-overlay like';
+            likeHint.innerHTML = '❤️';
+            card.appendChild(likeHint);
+        }
+        
+        // 初始化第一张卡片的提示
+        setTimeout(() => {
+            const firstCard = document.querySelector('.card');
+            if (firstCard) createHints(firstCard);
+        }, 3000);
+        
+        // 触摸事件
+        cardStack.addEventListener('touchstart', handleStart, { passive: false });
+        cardStack.addEventListener('touchmove', handleMove, { passive: false });
+        cardStack.addEventListener('touchend', handleEnd);
+        
+        // 鼠标事件
+        cardStack.addEventListener('mousedown', handleStart);
+        cardStack.addEventListener('mousemove', handleMove);
+        cardStack.addEventListener('mouseup', handleEnd);
+        cardStack.addEventListener('mouseleave', () => {
+            if (isDragging) handleEnd();
         });
         
-        cardStack.addEventListener('mouseup', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            const diffY = startY - e.clientY;
-            const diffX = e.clientX - startX;
-            
+        function handleStart(e) {
             const cards = cardStack.querySelectorAll('.card');
-            const currentCard = cards[0];
+            currentCard = cards[0];
+            if (!currentCard) return;
             
-            if (diffY > 80) {
-                startSession(currentCard);
-            } else if (diffX < -80) {
-                currentCard.style.transform = 'translateX(-120%) rotate(-20deg)';
-                currentCard.style.opacity = '0';
-                setTimeout(() => nextCard(), 300);
-            } else if (diffX > 80) {
-                currentCard.style.transform = 'translateX(120%) rotate(20deg)';
-                currentCard.style.opacity = '0';
-                setTimeout(() => nextCard(), 300);
+            isDragging = true;
+            currentCard.classList.add('dragging');
+            
+            if (e.type === 'touchstart') {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            } else {
+                startX = e.clientX;
+                startY = e.clientY;
             }
-        });
+            
+            if (!skipHint || !likeHint) createHints(currentCard);
+        }
+        
+        function handleMove(e) {
+            if (!isDragging || !currentCard) return;
+            e.preventDefault();
+            
+            let clientX, clientY;
+            if (e.type === 'touchmove') {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            currentX = clientX - startX;
+            currentY = clientY - startY;
+            
+            // 应用变换
+            const rotate = currentX * 0.05;
+            currentCard.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotate}deg)`;
+            
+            // 显示提示
+            if (currentX < -50) {
+                skipHint.classList.add('show');
+                likeHint.classList.remove('show');
+                currentCard.style.opacity = 1 - Math.abs(currentX) / 400;
+            } else if (currentX > 50) {
+                likeHint.classList.add('show');
+                skipHint.classList.remove('show');
+                currentCard.style.opacity = 1 - Math.abs(currentX) / 400;
+            } else {
+                skipHint.classList.remove('show');
+                likeHint.classList.remove('show');
+                currentCard.style.opacity = 1;
+            }
+        }
+        
+        function handleEnd(e) {
+            if (!isDragging || !currentCard) return;
+            
+            isDragging = false;
+            currentCard.classList.remove('dragging');
+            
+            // 判断是否触发动作
+            if (currentY < -100) {
+                // 上滑 - 开始放马
+                currentCard.style.transform = '';
+                startSession(currentCard);
+            } else if (currentX < -100) {
+                // 左滑 - 跳过
+                currentCard.style.transform = 'translateX(-150%) rotate(-30deg)';
+                currentCard.style.opacity = '0';
+                setTimeout(() => nextCard(), 300);
+            } else if (currentX > 100) {
+                // 右滑 - 收藏
+                currentCard.style.transform = 'translateX(150%) rotate(30deg)';
+                currentCard.style.opacity = '0';
+                saveToStable();
+                setTimeout(() => nextCard(), 300);
+            } else {
+                // 回弹
+                currentCard.style.transform = '';
+                currentCard.style.opacity = '1';
+            }
+            
+            // 隐藏提示
+            if (skipHint) skipHint.classList.remove('show');
+            if (likeHint) likeHint.classList.remove('show');
+            
+            currentX = 0;
+            currentY = 0;
+        }
+        
+        function saveToStable() {
+            // 收藏到马厩
+            const data = cardData[currentCardIndex];
+            let stable = JSON.parse(localStorage.getItem('fangma_stable') || '[]');
+            stable.push({ ...data, savedAt: new Date().toISOString() });
+            localStorage.setItem('fangma_stable', JSON.stringify(stable));
+            console.log('已收藏到马厩:', data.title);
+        }
         
         function nextCard() {
-            const cards = cardStack.querySelectorAll('.card');
-            cards[0].remove();
+            if (!currentCard) return;
+            currentCard.remove();
+            skipHint = null;
+            likeHint = null;
             
             currentCardIndex = (currentCardIndex + 1) % cardData.length;
             const nextData = cardData[(currentCardIndex + 2) % cardData.length];
@@ -547,10 +664,10 @@
             `;
             
             cardStack.appendChild(newCard);
+            currentCard = null;
         }
         
         function startSession(card) {
-            const type = card.dataset.type;
             const data = cardData[currentCardIndex];
             
             document.getElementById('session-quote').textContent = data.title;
@@ -592,7 +709,6 @@
             sessionTime = 600;
             isPaused = false;
             
-            // 增加连胜和金币
             document.getElementById('streak-count').textContent = 
                 parseInt(document.getElementById('streak-count').textContent) + 1;
             document.getElementById('coin-count').textContent = 
@@ -601,7 +717,6 @@
             document.getElementById('session').style.display = 'none';
             document.getElementById('main').style.display = 'block';
             
-            // 提示完成
             alert('🎉 放马完成！+10马币');
         }
         
