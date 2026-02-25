@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>放马</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -22,10 +18,7 @@
         /* 启动页 */
         #splash {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             flex-direction: column;
@@ -34,75 +27,133 @@
             z-index: 1000;
             transition: opacity 0.5s;
         }
-        
-        .horse-icon {
-            font-size: 80px;
-            animation: breathe 3s ease-in-out infinite;
-        }
-        
+        .horse-icon { font-size: 80px; animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe {
             0%, 100% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.1); opacity: 1; }
         }
-        
-        .app-name {
-            color: white;
-            font-size: 32px;
-            margin-top: 20px;
-            font-weight: 300;
-            letter-spacing: 8px;
-        }
-        
-        .tagline {
-            color: rgba(255,255,255,0.7);
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        /* 主界面 */
-        #main {
-            display: none;
-            height: 100vh;
-            position: relative;
-        }
+        .app-name { color: white; font-size: 32px; margin-top: 20px; font-weight: 300; letter-spacing: 8px; }
+        .tagline { color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 10px; }
         
         /* 顶部状态栏 */
         .header {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
         }
-        
-        .streak {
+        .streak, .coins {
             display: flex;
             align-items: center;
             gap: 5px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        .streak { color: white; }
+        .streak-fire { font-size: 18px; }
+        .coins { color: #FFD700; }
+        
+        /* 主界面 - 选择入口 */
+        #home {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+            padding: 80px 20px 100px;
+        }
+        .home-title {
             color: white;
-            font-size: 14px;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        .entry-cards {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+        .entry-card {
+            background: white;
             border-radius: 20px;
-        }
-        
-        .streak-fire {
-            font-size: 18px;
-        }
-        
-        .coins {
+            padding: 25px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            color: #FFD700;
-            font-size: 14px;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .entry-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .entry-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .entry-icon.aha { background: #FFE4E1; }
+        .entry-icon.music { background: #E3F2FD; }
+        .entry-icon.slang { background: #F3E5F5; }
+        .entry-info { flex: 1; }
+        .entry-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .entry-desc {
+            font-size: 13px;
+            color: #666;
+        }
+        .entry-arrow {
+            font-size: 24px;
+            color: #999;
+        }
+        
+        /* 内容流界面 */
+        #stream {
+            display: none;
+            height: 100vh;
+            position: relative;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stream-title {
+            position: absolute;
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            z-index: 100;
         }
         
         /* 卡片堆 */
@@ -113,9 +164,8 @@
             transform: translate(-50%, -50%);
             width: 85%;
             max-width: 350px;
-            height: 500px;
+            height: 480px;
         }
-        
         .card {
             position: absolute;
             width: 100%;
@@ -131,52 +181,46 @@
             user-select: none;
             touch-action: none;
         }
+        .card.dragging { transition: none; cursor: grabbing; }
+        .card:nth-child(1) { z-index: 3; }
+        .card:nth-child(2) { z-index: 2; transform: scale(0.95) translateY(15px); opacity: 0.7; }
+        .card:nth-child(3) { z-index: 1; transform: scale(0.9) translateY(30px); opacity: 0.4; }
         
-        .card.dragging {
-            transition: none;
-            cursor: grabbing;
-        }
-        
-        .card-hint-overlay {
+        /* 左右箭头 */
+        .swipe-arrows {
             position: absolute;
             top: 50%;
-            width: 70px;
-            height: 70px;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .swipe-arrow {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            transform: translateY(-50%) scale(0);
-            transition: transform 0.2s ease;
-            z-index: 100;
-            border: 3px solid white;
+            font-size: 24px;
+            opacity: 0.6;
+            transition: opacity 0.2s, transform 0.2s;
         }
-        
-        .card-hint-overlay.skip {
-            left: 20px;
+        .swipe-arrow.left {
             background: rgba(255, 71, 87, 0.9);
+            color: white;
         }
-        
-        .card-hint-overlay.like {
-            right: 20px;
+        .swipe-arrow.right {
             background: rgba(46, 213, 115, 0.9);
+            color: white;
         }
-        
-        .card-hint-overlay.show {
-            transform: translateY(-50%) scale(1);
-        }
-        
-        .card:nth-child(1) { z-index: 3; }
-        .card:nth-child(2) { 
-            z-index: 2; 
-            transform: scale(0.95) translateY(15px);
-            opacity: 0.7;
-        }
-        .card:nth-child(3) { 
-            z-index: 1; 
-            transform: scale(0.9) translateY(30px);
-            opacity: 0.4;
+        .swipe-arrow.active {
+            opacity: 1;
+            transform: scale(1.2);
         }
         
         .card-type {
@@ -188,7 +232,6 @@
             margin-bottom: 20px;
             align-self: flex-start;
         }
-        
         .card-type.aha { background: #FFE4E1; color: #FF6B6B; }
         .card-type.music { background: #E3F2FD; color: #2196F3; }
         .card-type.slang { background: #F3E5F5; color: #9C27B0; }
@@ -201,12 +244,7 @@
             align-items: center;
             text-align: center;
         }
-        
-        .card-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-        
+        .card-icon { font-size: 60px; margin-bottom: 20px; }
         .card-title {
             font-size: 22px;
             font-weight: 600;
@@ -214,18 +252,15 @@
             margin-bottom: 15px;
             line-height: 1.4;
         }
-        
         .card-desc {
             font-size: 14px;
             color: #666;
             line-height: 1.6;
         }
-        
         .card-hint {
             position: absolute;
             bottom: 20px;
-            left: 0;
-            right: 0;
+            left: 0; right: 0;
             text-align: center;
             color: #999;
             font-size: 12px;
@@ -241,7 +276,6 @@
             padding: 40px;
             color: white;
         }
-        
         .timer-ring {
             width: 250px;
             height: 250px;
@@ -254,61 +288,31 @@
             margin-bottom: 40px;
             position: relative;
         }
-        
         .timer-progress {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             border-radius: 50%;
             border: 4px solid transparent;
             border-top-color: white;
             animation: rotate 10s linear infinite;
         }
-        
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
-        .timer-text {
-            font-size: 48px;
-            font-weight: 200;
-            letter-spacing: 2px;
-        }
-        
-        .timer-label {
-            font-size: 14px;
-            opacity: 0.7;
-            margin-top: 5px;
-        }
-        
-        .session-content {
-            text-align: center;
-            max-width: 300px;
-        }
-        
-        .session-quote {
-            font-size: 20px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
-        
-        .session-author {
-            font-size: 14px;
-            opacity: 0.7;
-        }
-        
+        .timer-text { font-size: 48px; font-weight: 200; letter-spacing: 2px; }
+        .timer-label { font-size: 14px; opacity: 0.7; margin-top: 5px; }
+        .session-content { text-align: center; max-width: 300px; }
+        .session-quote { font-size: 20px; line-height: 1.6; margin-bottom: 20px; font-weight: 300; }
+        .session-author { font-size: 14px; opacity: 0.7; }
         .session-controls {
             position: absolute;
             bottom: 60px;
             display: flex;
             gap: 40px;
         }
-        
         .control-btn {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             border-radius: 50%;
             background: rgba(255,255,255,0.2);
             border: none;
@@ -320,24 +324,18 @@
             justify-content: center;
             transition: background 0.2s;
         }
-        
-        .control-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        .control-btn:hover { background: rgba(255,255,255,0.3); }
         
         /* 底部导航 */
         .nav {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             display: flex;
             justify-content: space-around;
             padding: 20px;
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
         }
-        
         .nav-item {
             color: rgba(255,255,255,0.6);
             font-size: 12px;
@@ -347,31 +345,24 @@
             gap: 5px;
             cursor: pointer;
             transition: color 0.2s;
+            position: relative;
         }
-        
-        .nav-item.active {
-            color: white;
-        }
-        
-        .nav-icon {
-            font-size: 24px;
-        }
-        
-        /* 提示 */
-        .swipe-hint {
+        .nav-item.active { color: white; }
+        .nav-icon { font-size: 24px; }
+        .nav-badge {
             position: absolute;
-            bottom: 100px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: rgba(255,255,255,0.6);
-            font-size: 14px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
+            top: -5px;
+            right: -5px;
+            background: #FF6B6B;
+            color: white;
+            font-size: 10px;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
         }
     </style>
 </head>
@@ -383,8 +374,8 @@
         <div class="tagline">每天10分钟，给精神放个假</div>
     </div>
     
-    <!-- 主界面 -->
-    <div id="main">
+    <!-- 主界面 - 选择入口 -->
+    <div id="home">
         <div class="header">
             <div class="streak">
                 <span class="streak-fire">🔥</span>
@@ -396,40 +387,39 @@
             </div>
         </div>
         
-        <div class="card-stack" id="cardStack">
-            <div class="card" data-type="aha">
-                <span class="card-type aha">💡 Aha Moment</span>
-                <div class="card-content">
-                    <div class="card-icon">✨</div>
-                    <div class="card-title">"人生就像骑自行车，想保持平衡就得往前走。"</div>
-                    <div class="card-desc">—— 爱因斯坦</div>
+        <div class="home-title">今天想怎么放马？</div>
+        
+        <div class="entry-cards">
+            <div class="entry-card" onclick="enterStream('aha')">
+                <div class="entry-icon aha">💡</div>
+                <div class="entry-info">
+                    <div class="entry-title">Aha Moment</div>
+                    <div class="entry-desc">发现有趣的洞见、幽默和灵感</div>
                 </div>
-                <div class="card-hint">上滑开始放马</div>
+                <div class="entry-arrow">›</div>
             </div>
-            <div class="card" data-type="music">
-                <span class="card-type music">🎵 安静内观</span>
-                <div class="card-content">
-                    <div class="card-icon">🌧️</div>
-                    <div class="card-title">雨声白噪音</div>
-                    <div class="card-desc">让雨声洗涤你的思绪，什么都不做，只是和自己待在一起</div>
+            
+            <div class="entry-card" onclick="enterStream('music')">
+                <div class="entry-icon music">🎵</div>
+                <div class="entry-info">
+                    <div class="entry-title">安静内观</div>
+                    <div class="entry-desc">白噪音、轻音乐，和自己待一会儿</div>
                 </div>
-                <div class="card-hint">上滑开始放马</div>
+                <div class="entry-arrow">›</div>
             </div>
-            <div class="card" data-type="slang">
-                <span class="card-type slang">🗣️ 每日俚语</span>
-                <div class="card-content">
-                    <div class="card-icon">🇺🇸</div>
-                    <div class="card-title">"Break a leg"</div>
-                    <div class="card-desc">不是"摔断腿"，而是"祝你好运"！<br>源自剧场传统，直接祝好运反而会倒霉</div>
+            
+            <div class="entry-card" onclick="enterStream('slang')">
+                <div class="entry-icon slang">🗣️</div>
+                <div class="entry-info">
+                    <div class="entry-title">每日俚语</div>
+                    <div class="entry-desc">学英语/粤语/西班牙语的地道表达</div>
                 </div>
-                <div class="card-hint">上滑开始放马</div>
+                <div class="entry-arrow">›</div>
             </div>
         </div>
         
-        <div class="swipe-hint">👆 上滑开始 · 👈 左滑跳过 · 👉 右滑收藏</div>
-        
         <div class="nav">
-            <div class="nav-item active">
+            <div class="nav-item active" onclick="showHome()">
                 <span class="nav-icon">🐎</span>
                 <span>放马</span>
             </div>
@@ -437,14 +427,37 @@
                 <span class="nav-icon">🎯</span>
                 <span>成就</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="showStable()">
                 <span class="nav-icon">📚</span>
                 <span>马厩</span>
+                <span class="nav-badge" id="stable-badge" style="display:none">0</span>
             </div>
             <div class="nav-item">
                 <span class="nav-icon">👤</span>
                 <span>我的</span>
             </div>
+        </div>
+    </div>
+    
+    <!-- 内容流界面 -->
+    <div id="stream">
+        <button class="back-btn" onclick="showHome()">‹</button>
+        <div class="stream-title" id="stream-title">Aha Moment</div>
+        
+        <div class="header" style="justify-content: flex-end;">
+            <div class="coins">
+                <span>🪙</span>
+                <span id="stream-coin-count">128</span>
+            </div>
+        </div>
+        
+        <div class="card-stack" id="cardStack">
+            <!-- 动态生成 -->
+        </div>
+        
+        <div class="swipe-arrows">
+            <div class="swipe-arrow left" id="arrow-left">←</div>
+            <div class="swipe-arrow right" id="arrow-right">→</div>
         </div>
     </div>
     
@@ -457,8 +470,8 @@
         </div>
         
         <div class="session-content">
-            <div class="session-quote" id="session-quote">"人生就像骑自行车，想保持平衡就得往前走。"</div>
-            <div class="session-author" id="session-author">—— 爱因斯坦</div>
+            <div class="session-quote" id="session-quote"></div>
+            <div class="session-author" id="session-author"></div>
         </div>
         
         <div class="session-controls">
@@ -469,234 +482,246 @@
     </div>
 
     <script>
-        // 启动页动画
-        setTimeout(() => {
-            document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('splash').style.display = 'none';
-                document.getElementById('main').style.display = 'block';
-            }, 500);
-        }, 2500);
+        // 数据
+        const contentData = {
+            aha: [
+                { icon: '✨', title: '"人生就像骑自行车，想保持平衡就得往前走。"', desc: '—— 爱因斯坦' },
+                { icon: '😄', title: '为什么程序员分不清万圣节和圣诞节？', desc: '因为 Oct 31 = Dec 25\n(八进制31 = 十进制25)' },
+                { icon: '🎭', title: '"生活不是等待暴风雨过去，而是学会在雨中跳舞。"', desc: '—— 维维安·格林' },
+                { icon: '🤔', title: '冷知识：蜂蜜永远不会变质', desc: '考古学家在古埃及墓穴中发现了3000年前的蜂蜜，仍然可以食用' },
+            ],
+            music: [
+                { icon: '🌧️', title: '雨声白噪音', desc: '让雨声洗涤你的思绪，什么都不做，只是和自己待在一起' },
+                { icon: '🎹', title: '钢琴轻音乐', desc: '让音符带你漂浮，10分钟后你会感谢现在的自己' },
+                { icon: '🌊', title: '海浪声', desc: '闭上眼睛，想象你站在海边，听潮起潮落' },
+                { icon: '🔥', title: '篝火声', desc: '温暖的噼啪声，像冬夜里的一杯热茶' },
+            ],
+            slang: [
+                { icon: '🇺🇸', title: '"Break a leg"', desc: '不是"摔断腿"，而是"祝你好运"！\n源自剧场传统，直接祝好运反而会倒霉' },
+                { icon: '🇬🇧', title: '"It\'s raining cats and dogs"', desc: '下猫下狗？不，是"倾盆大雨"！\n源自17世纪英国，当时街上真的有很多流浪动物' },
+                { icon: '🇪🇸', title: '"Costar un ojo de la cara"', desc: '西班牙语："花一只眼睛的钱" = 贵得要命' },
+                { icon: '🇭🇰', title: '"食咗饭未？"', desc: '粤语：吃饭了吗？\n不只是问候，是"我关心你"的意思' },
+            ]
+        };
         
-        // 卡片数据
-        const cardData = [
-            { type: 'aha', icon: '✨', title: '"人生就像骑自行车，想保持平衡就得往前走。"', desc: '—— 爱因斯坦' },
-            { type: 'music', icon: '🌧️', title: '雨声白噪音', desc: '让雨声洗涤你的思绪，什么都不做，只是和自己待在一起' },
-            { type: 'slang', icon: '🇺🇸', title: '"Break a leg"', desc: '不是"摔断腿"，而是"祝你好运"！<br>源自剧场传统，直接祝好运反而会倒霉' },
-            { type: 'aha', icon: '😄', title: '为什么程序员分不清万圣节和圣诞节？', desc: '因为 Oct 31 = Dec 25<br>(八进制31 = 十进制25)' },
-            { type: 'music', icon: '🎹', title: '钢琴轻音乐', desc: '让音符带你漂浮，10分钟后你会感谢现在的自己' },
-            { type: 'slang', icon: '🇬🇧', title: '"It\'s raining cats and dogs"', desc: '下猫下狗？不，是"倾盆大雨"！<br>源自17世纪英国，当时街上真的有很多流浪动物' },
-        ];
+        const typeLabels = { aha: '💡 Aha Moment', music: '🎵 安静内观', slang: '🗣️ 每日俚语' };
+        const typeClasses = { aha: 'aha', music: 'music', slang: 'slang' };
         
-        let currentCardIndex = 0;
+        let currentType = null;
+        let currentIndex = 0;
         let sessionTime = 600;
         let timerInterval;
         let isPaused = false;
         
-        // 滑动状态
-        const cardStack = document.getElementById('cardStack');
-        let startX = 0, startY = 0;
-        let currentX = 0, currentY = 0;
-        let isDragging = false;
-        let currentCard = null;
-        let skipHint = null;
-        let likeHint = null;
-        
-        // 创建提示元素
-        function createHints(card) {
-            if (skipHint) skipHint.remove();
-            if (likeHint) likeHint.remove();
-            
-            skipHint = document.createElement('div');
-            skipHint.className = 'card-hint-overlay skip';
-            skipHint.innerHTML = '👎';
-            card.appendChild(skipHint);
-            
-            likeHint = document.createElement('div');
-            likeHint.className = 'card-hint-overlay like';
-            likeHint.innerHTML = '❤️';
-            card.appendChild(likeHint);
-        }
-        
-        // 初始化第一张卡片的提示
+        // 启动页
         setTimeout(() => {
-            const firstCard = document.querySelector('.card');
-            if (firstCard) createHints(firstCard);
-        }, 3000);
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash').style.display = 'none';
+                showHome();
+            }, 500);
+        }, 2500);
         
-        // 触摸事件
-        cardStack.addEventListener('touchstart', handleStart, { passive: false });
-        cardStack.addEventListener('touchmove', handleMove, { passive: false });
-        cardStack.addEventListener('touchend', handleEnd);
-        
-        // 鼠标事件
-        cardStack.addEventListener('mousedown', handleStart);
-        cardStack.addEventListener('mousemove', handleMove);
-        cardStack.addEventListener('mouseup', handleEnd);
-        cardStack.addEventListener('mouseleave', () => {
-            if (isDragging) handleEnd();
-        });
-        
-        function handleStart(e) {
-            const cards = cardStack.querySelectorAll('.card');
-            currentCard = cards[0];
-            if (!currentCard) return;
-            
-            isDragging = true;
-            currentCard.classList.add('dragging');
-            
-            if (e.type === 'touchstart') {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
+        // 更新马厩徽章
+        function updateStableBadge() {
+            const stable = JSON.parse(localStorage.getItem('fangma_stable') || '[]');
+            const badge = document.getElementById('stable-badge');
+            if (stable.length > 0) {
+                badge.textContent = stable.length;
+                badge.style.display = 'flex';
             } else {
-                startX = e.clientX;
-                startY = e.clientY;
+                badge.style.display = 'none';
             }
-            
-            if (!skipHint || !likeHint) createHints(currentCard);
+        }
+        updateStableBadge();
+        
+        // 显示主界面
+        function showHome() {
+            document.getElementById('home').style.display = 'flex';
+            document.getElementById('stream').style.display = 'none';
+            document.getElementById('session').style.display = 'none';
+            updateStableBadge();
         }
         
-        function handleMove(e) {
-            if (!isDragging || !currentCard) return;
-            e.preventDefault();
+        // 进入内容流
+        function enterStream(type) {
+            currentType = type;
+            currentIndex = 0;
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('stream').style.display = 'block';
+            document.getElementById('stream-title').textContent = typeLabels[type].split(' ')[1];
+            renderCards();
+            initSwipe();
+        }
+        
+        // 渲染卡片
+        function renderCards() {
+            const stack = document.getElementById('cardStack');
+            stack.innerHTML = '';
+            const data = contentData[currentType];
             
-            let clientX, clientY;
-            if (e.type === 'touchmove') {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            
-            currentX = clientX - startX;
-            currentY = clientY - startY;
-            
-            // 应用变换
-            const rotate = currentX * 0.05;
-            currentCard.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotate}deg)`;
-            
-            // 显示提示
-            if (currentX < -50) {
-                skipHint.classList.add('show');
-                likeHint.classList.remove('show');
-                currentCard.style.opacity = 1 - Math.abs(currentX) / 400;
-            } else if (currentX > 50) {
-                likeHint.classList.add('show');
-                skipHint.classList.remove('show');
-                currentCard.style.opacity = 1 - Math.abs(currentX) / 400;
-            } else {
-                skipHint.classList.remove('show');
-                likeHint.classList.remove('show');
-                currentCard.style.opacity = 1;
+            for (let i = 0; i < Math.min(3, data.length); i++) {
+                const item = data[(currentIndex + i) % data.length];
+                const card = createCard(item, i === 0);
+                stack.appendChild(card);
             }
         }
         
-        function handleEnd(e) {
-            if (!isDragging || !currentCard) return;
-            
-            isDragging = false;
-            currentCard.classList.remove('dragging');
-            
-            // 判断是否触发动作
-            if (currentY < -100) {
-                // 上滑 - 开始放马
-                currentCard.style.transform = '';
-                startSession(currentCard);
-            } else if (currentX < -100) {
-                // 左滑 - 跳过
-                currentCard.style.transform = 'translateX(-150%) rotate(-30deg)';
-                currentCard.style.opacity = '0';
-                setTimeout(() => nextCard(), 300);
-            } else if (currentX > 100) {
-                // 右滑 - 收藏
-                currentCard.style.transform = 'translateX(150%) rotate(30deg)';
-                currentCard.style.opacity = '0';
-                saveToStable();
-                setTimeout(() => nextCard(), 300);
-            } else {
-                // 回弹
-                currentCard.style.transform = '';
-                currentCard.style.opacity = '1';
-            }
-            
-            // 隐藏提示
-            if (skipHint) skipHint.classList.remove('show');
-            if (likeHint) likeHint.classList.remove('show');
-            
-            currentX = 0;
-            currentY = 0;
+        function createCard(data, isFirst) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.index = currentIndex;
+            card.innerHTML = `
+                <span class="card-type ${typeClasses[currentType]}">${typeLabels[currentType]}</span>
+                <div class="card-content">
+                    <div class="card-icon">${data.icon}</div>
+                    <div class="card-title">${data.title}</div>
+                    <div class="card-desc">${data.desc.replace(/\n/g, '<br>')}</div>
+                </div>
+                <div class="card-hint">👆 上滑开始放马</div>
+            `;
+            return card;
         }
         
-        function saveToStable() {
-            // 收藏到马厩
-            const data = cardData[currentCardIndex];
-            let stable = JSON.parse(localStorage.getItem('fangma_stable') || '[]');
-            stable.push({ ...data, savedAt: new Date().toISOString() });
-            localStorage.setItem('fangma_stable', JSON.stringify(stable));
-            console.log('已收藏到马厩:', data.title);
+        // 滑动逻辑
+        function initSwipe() {
+            const stack = document.getElementById('cardStack');
+            let startX = 0, startY = 0, currentX = 0, currentY = 0;
+            let isDragging = false;
+            let currentCard = null;
+            
+            stack.addEventListener('touchstart', handleStart, { passive: false });
+            stack.addEventListener('touchmove', handleMove, { passive: false });
+            stack.addEventListener('touchend', handleEnd);
+            stack.addEventListener('mousedown', handleStart);
+            stack.addEventListener('mousemove', handleMove);
+            stack.addEventListener('mouseup', handleEnd);
+            stack.addEventListener('mouseleave', () => { if (isDragging) handleEnd(); });
+            
+            function handleStart(e) {
+                const cards = stack.querySelectorAll('.card');
+                currentCard = cards[0];
+                if (!currentCard) return;
+                
+                isDragging = true;
+                currentCard.classList.add('dragging');
+                
+                if (e.type === 'touchstart') {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                } else {
+                    startX = e.clientX;
+                    startY = e.clientY;
+                }
+            }
+            
+            function handleMove(e) {
+                if (!isDragging || !currentCard) return;
+                e.preventDefault();
+                
+                let clientX, clientY;
+                if (e.type === 'touchmove') {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                
+                currentX = clientX - startX;
+                currentY = clientY - startY;
+                
+                const rotate = currentX * 0.05;
+                currentCard.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotate}deg)`;
+                
+                // 箭头提示
+                const leftArrow = document.getElementById('arrow-left');
+                const rightArrow = document.getElementById('arrow-right');
+                
+                if (currentX < -30) {
+                    leftArrow.classList.add('active');
+                    rightArrow.classList.remove('active');
+                } else if (currentX > 30) {
+                    rightArrow.classList.add('active');
+                    leftArrow.classList.remove('active');
+                } else {
+                    leftArrow.classList.remove('active');
+                    rightArrow.classList.remove('active');
+                }
+            }
+            
+            function handleEnd(e) {
+                if (!isDragging || !currentCard) return;
+                
+                isDragging = false;
+                currentCard.classList.remove('dragging');
+                document.getElementById('arrow-left').classList.remove('active');
+                document.getElementById('arrow-right').classList.remove('active');
+                
+                if (currentY < -80) {
+                    startSession(currentCard);
+                } else if (currentX < -80) {
+                    currentCard.style.transform = 'translateX(-150%) rotate(-30deg)';
+                    currentCard.style.opacity = '0';
+                    setTimeout(() => nextCard(), 300);
+                } else if (currentX > 80) {
+                    currentCard.style.transform = 'translateX(150%) rotate(30deg)';
+                    currentCard.style.opacity = '0';
+                    saveToStable();
+                    setTimeout(() => nextCard(), 300);
+                } else {
+                    currentCard.style.transform = '';
+                }
+                
+                currentX = 0;
+                currentY = 0;
+            }
         }
         
         function nextCard() {
-            if (!currentCard) return;
-            currentCard.remove();
-            skipHint = null;
-            likeHint = null;
+            const stack = document.getElementById('cardStack');
+            const cards = stack.querySelectorAll('.card');
+            if (cards[0]) cards[0].remove();
             
-            currentCardIndex = (currentCardIndex + 1) % cardData.length;
-            const nextData = cardData[(currentCardIndex + 2) % cardData.length];
-            
-            const newCard = document.createElement('div');
-            newCard.className = 'card';
-            newCard.dataset.type = nextData.type;
-            
-            const typeLabels = { aha: '💡 Aha Moment', music: '🎵 安静内观', slang: '🗣️ 每日俚语' };
-            const typeClasses = { aha: 'aha', music: 'music', slang: 'slang' };
-            
-            newCard.innerHTML = `
-                <span class="card-type ${typeClasses[nextData.type]}">${typeLabels[nextData.type]}</span>
-                <div class="card-content">
-                    <div class="card-icon">${nextData.icon}</div>
-                    <div class="card-title">${nextData.title}</div>
-                    <div class="card-desc">${nextData.desc}</div>
-                </div>
-                <div class="card-hint">上滑开始放马</div>
-            `;
-            
-            cardStack.appendChild(newCard);
-            currentCard = null;
+            currentIndex = (currentIndex + 1) % contentData[currentType].length;
+            const newData = contentData[currentType][(currentIndex + 2) % contentData[currentType].length];
+            const newCard = createCard(newData, false);
+            stack.appendChild(newCard);
+        }
+        
+        function saveToStable() {
+            const data = contentData[currentType][currentIndex];
+            let stable = JSON.parse(localStorage.getItem('fangma_stable') || '[]');
+            stable.push({ ...data, type: currentType, savedAt: new Date().toISOString() });
+            localStorage.setItem('fangma_stable', JSON.stringify(stable));
+            updateStableBadge();
         }
         
         function startSession(card) {
-            const data = cardData[currentCardIndex];
-            
+            const data = contentData[currentType][currentIndex];
             document.getElementById('session-quote').textContent = data.title;
-            document.getElementById('session-author').innerHTML = data.desc;
-            
-            document.getElementById('main').style.display = 'none';
+            document.getElementById('session-author').innerHTML = data.desc.replace(/\n/g, '<br>');
+            document.getElementById('stream').style.display = 'none';
             document.getElementById('session').style.display = 'flex';
-            
             startTimer();
         }
         
         function startTimer() {
+            sessionTime = 600;
+            updateTimerDisplay();
             timerInterval = setInterval(() => {
                 if (!isPaused) {
                     sessionTime--;
                     updateTimerDisplay();
-                    
-                    if (sessionTime <= 0) {
-                        endSession();
-                    }
+                    if (sessionTime <= 0) endSession();
                 }
             }, 1000);
         }
         
         function updateTimerDisplay() {
-            const minutes = Math.floor(sessionTime / 60);
-            const seconds = sessionTime % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            const m = Math.floor(sessionTime / 60);
+            const s = sessionTime % 60;
+            document.getElementById('timer').textContent = `${m}:${s.toString().padStart(2, '0')}`;
         }
         
         function togglePause() {
@@ -706,22 +731,34 @@
         
         function endSession() {
             clearInterval(timerInterval);
-            sessionTime = 600;
             isPaused = false;
+            document.querySelector('.control-btn').textContent = '⏸️';
             
             document.getElementById('streak-count').textContent = 
                 parseInt(document.getElementById('streak-count').textContent) + 1;
             document.getElementById('coin-count').textContent = 
                 parseInt(document.getElementById('coin-count').textContent) + 10;
+            document.getElementById('stream-coin-count').textContent = 
+                document.getElementById('coin-count').textContent;
             
             document.getElementById('session').style.display = 'none';
-            document.getElementById('main').style.display = 'block';
+            document.getElementById('stream').style.display = 'block';
             
             alert('🎉 放马完成！+10马币');
         }
         
         function shareContent() {
             alert('📤 分享功能（可生成精美卡片图片）');
+        }
+        
+        function showStable() {
+            const stable = JSON.parse(localStorage.getItem('fangma_stable') || '[]');
+            if (stable.length === 0) {
+                alert('马厩是空的，右滑卡片可以收藏到这里哦~');
+            } else {
+                alert(`马厩里有 ${stable.length} 个收藏:\n\n` + 
+                    stable.slice(-5).map((item, i) => `${i+1}. ${item.title.substring(0, 20)}...`).join('\n'));
+            }
         }
     </script>
 </body>
