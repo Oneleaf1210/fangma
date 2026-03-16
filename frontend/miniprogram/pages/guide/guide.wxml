@@ -1,0 +1,99 @@
+<!-- pages/guide/guide.wxml - 引导页面 -->
+
+<view class="guide-container">
+  <!-- 步骤指示器 -->
+  <view class="step-indicator">
+    <view class="steps">
+      <view
+        wx:for="{{steps}}"
+        wx:key="index"
+        class="step-dot {{index === currentStep ? 'active' : ''}} {{index < currentStep ? 'completed' : ''}}"
+      ></view>
+    </view>
+    <text class="step-text">步骤 {{currentStep + 1}}/{{totalSteps}}</text>
+  </view>
+
+  <!-- 滑动容器 -->
+  <swiper
+    class="guide-swiper"
+    current="{{currentStep}}"
+    bindchange="onSwiperChange"
+    duration="300"
+    circular="{{false}}"
+  >
+    <block wx:for="{{steps}}" wx:key="index">
+      <swiper-item>
+        <view class="step-content">
+          <!-- 图片区域 -->
+          <view class="image-container">
+            <image
+              src="{{item.image}}"
+              mode="aspectFit"
+              class="guide-image"
+            />
+            <view class="image-overlay"></view>
+          </view>
+
+          <!-- 内容区域 -->
+          <view class="content-container">
+            <view class="step-title">{{item.title}}</view>
+            <view class="step-description">{{item.description}}</view>
+
+            <!-- 进度条（仅最后一步显示） -->
+            <view wx:if="{{index === totalSteps - 1}}" class="progress-container">
+              <slider
+                value="{{currentStep / (totalSteps - 1)}}"
+                min="0"
+                max="1"
+                step="0.01"
+                activeColor="#5c6bc0"
+                backgroundColor="#e0e0e0"
+                block-color="#5c6bc0"
+                block-size="20"
+                show-value="{{false}}"
+                bindchange="onProgressChange"
+              />
+            </view>
+          </view>
+        </view>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <!-- 按钮区域 -->
+  <view class="button-container">
+    <!-- 上一步按钮 -->
+    <button
+      wx:if="{{currentStep > 0}}"
+      class="btn btn-secondary prev-btn"
+      bindtap="onPrevTap"
+    >
+      上一步
+    </button>
+
+    <!-- 下一步/开始按钮 -->
+    <button
+      class="btn btn-primary next-btn {{currentStep === 0 ? 'full-width' : ''}}"
+      bindtap="onNextTap"
+    >
+      {{steps[currentStep].buttonText}}
+    </button>
+
+    <!-- 跳过按钮 -->
+    <view
+      wx:if="{{showSkip && currentStep === 0}}"
+      class="skip-container"
+    >
+      <text class="skip-text" bindtap="onSkipTap">跳过引导</text>
+    </view>
+  </view>
+
+  <!-- 页面指示器 -->
+  <view class="page-indicator">
+    <view
+      wx:for="{{steps}}"
+      wx:key="index"
+      class="page-dot {{index === currentStep ? 'active' : ''}}"
+    ></view>
+  </view>
+</view>

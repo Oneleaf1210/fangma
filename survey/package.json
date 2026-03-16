@@ -1,0 +1,24 @@
+{
+  "name": "fangma-survey-deployment",
+  "version": "1.0.0",
+  "description": "放马产品市场调研问卷部署工具",
+  "main": "deploy-survey.js",
+  "scripts": {
+    "start": "node deploy-survey.js",
+    "deploy": "node deploy-survey.js",
+    "check": "node deploy-survey.js check",
+    "test": "echo \"需要在浏览器中手动测试问卷功能\" && exit 0"
+  },
+  "keywords": [
+    "survey",
+    "deployment",
+    "fangma",
+    "questionnaire"
+  ],
+  "author": "放马项目团队",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

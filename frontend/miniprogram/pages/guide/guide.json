@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "引导",
+  "navigationBarBackgroundColor": "#5c6bc0",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f7fa",
+  "enablePullDownRefresh": false,
+  "disableScroll": true,
+  "usingComponents": {}
+}

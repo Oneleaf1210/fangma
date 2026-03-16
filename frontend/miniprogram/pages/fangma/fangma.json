@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "放马",
+  "navigationBarBackgroundColor": "#64b5f6",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f7fa",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
+}

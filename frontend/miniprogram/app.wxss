@@ -1,0 +1,484 @@
+/* app.wxss - 放马小程序全局样式 */
+
+/* 全局样式重置 */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f7fa;
+  height: 100%;
+}
+
+/* 容器样式 */
+.container {
+  padding: 20rpx;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+/* 卡片样式 */
+.card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin: 20rpx 0;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4rpx);
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.12);
+}
+
+/* 按钮样式 */
+.btn {
+  display: inline-block;
+  padding: 20rpx 40rpx;
+  border-radius: 50rpx;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #5c6bc0, #7986cb);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4a56a8, #6772b8);
+  box-shadow: 0 6rpx 20rpx rgba(92, 107, 192, 0.3);
+}
+
+.btn-secondary {
+  background: #f0f2f5;
+  color: #666;
+  border: 2rpx solid #e0e0e0;
+}
+
+.btn-secondary:hover {
+  background: #e8eaf6;
+  border-color: #5c6bc0;
+  color: #5c6bc0;
+}
+
+.btn-large {
+  padding: 30rpx 60rpx;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* 标题样式 */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 20rpx 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 48rpx;
+  color: #2c3e50;
+}
+
+h2 {
+  font-size: 40rpx;
+  color: #34495e;
+}
+
+h3 {
+  font-size: 36rpx;
+  color: #5c6bc0;
+}
+
+h4 {
+  font-size: 32rpx;
+  color: #666;
+}
+
+/* 文本样式 */
+.text-primary {
+  color: #5c6bc0;
+}
+
+.text-secondary {
+  color: #7f8c8d;
+}
+
+.text-success {
+  color: #4caf50;
+}
+
+.text-warning {
+  color: #ff9800;
+}
+
+.text-danger {
+  color: #f44336;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* 间距工具类 */
+.mt-10 { margin-top: 10rpx; }
+.mt-20 { margin-top: 20rpx; }
+.mt-30 { margin-top: 30rpx; }
+.mt-40 { margin-top: 40rpx; }
+
+.mb-10 { margin-bottom: 10rpx; }
+.mb-20 { margin-bottom: 20rpx; }
+.mb-30 { margin-bottom: 30rpx; }
+.mb-40 { margin-bottom: 40rpx; }
+
+.ml-10 { margin-left: 10rpx; }
+.ml-20 { margin-left: 20rpx; }
+.ml-30 { margin-left: 30rpx; }
+
+.mr-10 { margin-right: 10rpx; }
+.mr-20 { margin-right: 20rpx; }
+.mr-30 { margin-right: 30rpx; }
+
+.p-20 { padding: 20rpx; }
+.p-30 { padding: 30rpx; }
+.p-40 { padding: 40rpx; }
+
+/* 布局工具类 */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-around {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+/* 图标样式 */
+.icon {
+  width: 48rpx;
+  height: 48rpx;
+  vertical-align: middle;
+}
+
+.icon-large {
+  width: 96rpx;
+  height: 96rpx;
+}
+
+.icon-xlarge {
+  width: 144rpx;
+  height: 144rpx;
+}
+
+/* 表单元素 */
+.input {
+  width: 100%;
+  padding: 24rpx 32rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 12rpx;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: #5c6bc0;
+  box-shadow: 0 0 0 3rpx rgba(92, 107, 192, 0.1);
+  outline: none;
+}
+
+.input-error {
+  border-color: #f44336;
+}
+
+.input-success {
+  border-color: #4caf50;
+}
+
+.label {
+  display: block;
+  margin-bottom: 10rpx;
+  font-weight: 500;
+  color: #666;
+}
+
+/* 开关样式 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 80rpx;
+  height: 44rpx;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 44rpx;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 36rpx;
+  width: 36rpx;
+  left: 4rpx;
+  bottom: 4rpx;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #5c6bc0;
+}
+
+input:checked + .slider:before {
+  transform: translateX(36rpx);
+}
+
+/* 加载动画 */
+.loading {
+  display: inline-block;
+  width: 40rpx;
+  height: 40rpx;
+  border: 4rpx solid #f3f3f3;
+  border-top: 4rpx solid #5c6bc0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 进度条 */
+.progress-bar {
+  height: 8rpx;
+  background: #e0e0e0;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #64b5f6, #7986cb);
+  transition: width 0.5s ease;
+}
+
+/* 徽章 */
+.badge {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 20rpx;
+  background: #e8eaf6;
+  color: #5c6bc0;
+}
+
+.badge-primary {
+  background: #5c6bc0;
+  color: white;
+}
+
+.badge-success {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.badge-warning {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+/* 分割线 */
+.divider {
+  height: 2rpx;
+  background: #eef2f7;
+  margin: 40rpx 0;
+}
+
+/* 马匹隐喻主题颜色 */
+.theme-fangma {
+  color: #64b5f6; /* 放马蓝 - 放松 */
+}
+
+.theme-cema {
+  color: #ff9800; /* 策马橙 - 动力 */
+}
+
+.theme-yuma {
+  color: #5c6bc0; /* 驭马紫 - 控制 */
+}
+
+.theme-zhuama {
+  color: #ffd600; /* 抓马金 - 惊喜 */
+}
+
+.bg-fangma {
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+}
+
+.bg-cema {
+  background: linear-gradient(135deg, #fff3e0, #fce4ec);
+}
+
+.bg-yuma {
+  background: linear-gradient(135deg, #f3e5f5, #e8eaf6);
+}
+
+.bg-zhuama {
+  background: linear-gradient(135deg, #fff9c4, #f3e5f5);
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .container {
+    padding: 20rpx;
+  }
+
+  h1 {
+    font-size: 40rpx;
+  }
+
+  h2 {
+    font-size: 36rpx;
+  }
+
+  .card {
+    padding: 24rpx;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease;
+}
+
+.slide-down {
+  animation: slideDown 0.5s ease;
+}
+
+.scale-in {
+  animation: scaleIn 0.5s ease;
+}
+
+/* 工具类 */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.no-select {
+  user-select: none;
+}
+
+.rounded {
+  border-radius: 16rpx;
+}
+
+.rounded-full {
+  border-radius: 9999rpx;
+}
+
+.shadow {
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.shadow-lg {
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.12);
+}
+
+/* 打印样式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

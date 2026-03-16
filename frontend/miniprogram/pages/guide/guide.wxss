@@ -1,0 +1,292 @@
+/* pages/guide/guide.wxss - 引导页面样式 */
+
+.guide-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+}
+
+/* 步骤指示器 */
+.step-indicator {
+  padding: 40rpx 40rpx 20rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10rpx);
+  border-bottom: 2rpx solid #eef2f7;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.step-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: #e0e0e0;
+  margin: 0 16rpx;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.step-dot.active {
+  background: #5c6bc0;
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4rpx rgba(92, 107, 192, 0.2);
+}
+
+.step-dot.completed {
+  background: #4caf50;
+}
+
+.step-dot.completed::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14rpx;
+  font-weight: bold;
+}
+
+.step-text {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 滑动容器 */
+.guide-swiper {
+  flex: 1;
+  height: 100%;
+}
+
+.step-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 图片区域 */
+.image-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.guide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200rpx;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
+}
+
+/* 内容区域 */
+.content-container {
+  background: white;
+  padding: 60rpx 40rpx 40rpx;
+  border-top-left-radius: 40rpx;
+  border-top-right-radius: 40rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+.step-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.step-description {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #666;
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+
+/* 进度条 */
+.progress-container {
+  margin: 40rpx 0;
+  padding: 0 20rpx;
+}
+
+/* 按钮区域 */
+.button-container {
+  padding: 40rpx;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 2rpx solid #eef2f7;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.btn {
+  min-width: 200rpx;
+}
+
+.prev-btn {
+  background: #f0f2f5;
+  color: #666;
+}
+
+.next-btn {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.next-btn.full-width {
+  margin-left: 0;
+  width: 100%;
+}
+
+/* 跳过按钮 */
+.skip-container {
+  text-align: center;
+  margin-top: 30rpx;
+  width: 100%;
+}
+
+.skip-text {
+  color: #999;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.skip-text:active {
+  color: #5c6bc0;
+}
+
+/* 页面指示器 */
+.page-indicator {
+  position: absolute;
+  bottom: 200rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 20;
+}
+
+.page-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  margin: 0 8rpx;
+  transition: all 0.3s ease;
+}
+
+.page-dot.active {
+  background: white;
+  transform: scale(1.2);
+  box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-content {
+  animation: fadeInUp 0.5s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .content-container {
+    padding: 40rpx 30rpx 30rpx;
+  }
+
+  .step-title {
+    font-size: 36rpx;
+  }
+
+  .step-description {
+    font-size: 26rpx;
+  }
+
+  .button-container {
+    padding: 30rpx;
+  }
+
+  .btn {
+    min-width: 180rpx;
+  }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .guide-container {
+    background: linear-gradient(135deg, #1a237e 0%, #4a148c 100%);
+  }
+
+  .step-indicator {
+    background: rgba(30, 30, 40, 0.9);
+    border-bottom-color: #2d2d3d;
+  }
+
+  .step-text {
+    color: #aaa;
+  }
+
+  .content-container {
+    background: #1e1e28;
+    box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.2);
+  }
+
+  .step-title {
+    color: #f0f0f0;
+  }
+
+  .step-description {
+    color: #aaa;
+  }
+
+  .image-overlay {
+    background: linear-gradient(to top, rgba(30, 30, 40, 0.9), transparent);
+  }
+
+  .button-container {
+    background: #1e1e28;
+    border-top-color: #2d2d3d;
+  }
+
+  .prev-btn {
+    background: #2d2d3d;
+    color: #ddd;
+  }
+
+  .page-dot {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .page-dot.active {
+    background: white;
+  }
+}

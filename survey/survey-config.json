@@ -1,0 +1,15 @@
+{
+  "github": {
+    "username": "Oneleaf1210",
+    "repository": "fangma-survey-data",
+    "branch": "main",
+    "token": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN"
+  },
+  "google": {
+    "scriptUrl": "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+  },
+  "deployment": {
+    "surveyUrl": "",
+    "lastDeployed": null
+  }
+}

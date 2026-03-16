@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/guide/guide",
+    "pages/fangma/fangma",
+    "pages/cema/cema",
+    "pages/yuma/yuma",
+    "pages/zhuama/zhuama",
+    "pages/settings/settings",
+    "pages/chat/chat",
+    "pages/learning/learning"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#5c6bc0",
+    "navigationBarTitleText": "放自己一马",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f7fa"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#5c6bc0",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/fangma/fangma",
+        "text": "放马",
+        "iconPath": "assets/icons/fangma.png",
+        "selectedIconPath": "assets/icons/fangma-active.png"
+      },
+      {
+        "pagePath": "pages/zhuama/zhuama",
+        "text": "抓马",
+        "iconPath": "assets/icons/zhuama.png",
+        "selectedIconPath": "assets/icons/zhuama-active.png"
+      },
+      {
+        "pagePath": "pages/yuma/yuma",
+        "text": "驭马",
+        "iconPath": "assets/icons/yuma.png",
+        "selectedIconPath": "assets/icons/yuma-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于提供更精准的提醒服务"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ]
+}
