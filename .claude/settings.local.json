@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(file /Users/oneleaf/Downloads/cc/*)",
-      "Bash(wc -l /Users/oneleaf/Downloads/cc/*.md /Users/oneleaf/Downloads/cc/*.html)"
-    ]
-  }
-}

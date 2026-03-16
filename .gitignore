@@ -164,3 +164,6 @@ frontend/miniprogram/miniprogram_npm/
 # 问卷数据（如果有本地存储）
 survey_data.json
 *.json.backup
+
+# Claude Code本地配置
+.claude/
