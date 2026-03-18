@@ -16,28 +16,44 @@ function doPost(e) {
     // 发送邮件
     const result = sendQuestionnaireEmail(data);
 
-    // 返回成功响应
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        success: true,
-        message: '问卷数据已发送到邮箱',
-        timestamp: new Date().toISOString()
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
+    // 返回带CORS头的成功响应
+    return createCORSResponse({
+      success: true,
+      message: '问卷数据已发送到邮箱',
+      timestamp: new Date().toISOString()
+    });
 
   } catch (error) {
     // 记录错误
     console.error('处理提交时出错:', error);
 
-    // 返回错误响应
-    return ContentService
-      .createTextOutput(JSON.stringify({
-        success: false,
-        message: '处理失败: ' + error.message,
-        timestamp: new Date().toISOString()
-      }))
-      .setMimeType(ContentService.MimeType.JSON);
+    // 返回带CORS头的错误响应
+    return createCORSResponse({
+      success: false,
+      message: '处理失败: ' + error.message,
+      timestamp: new Date().toISOString()
+    });
   }
+}
+
+/**
+ * 创建带CORS头的响应
+ */
+function createCORSResponse(data) {
+  const output = ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+
+  return output;
+}
+
+/**
+ * 处理 OPTIONS 预检请求（CORS）
+ */
+function doOptions(e) {
+  return ContentService
+    .createTextOutput('')
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
