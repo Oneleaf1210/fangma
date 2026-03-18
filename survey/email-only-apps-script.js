@@ -1,12 +1,15 @@
 /**
- * 放马问卷数据收集 - 邮件专用版 Google Apps Script
+ * 放马问卷数据收集 - 邮件+表格版 Google Apps Script
  *
- * 此版本不保存到Google表格，只发送邮件通知
- * 将问卷数据直接发送到指定邮箱
+ * 此版本同时发送邮件通知和保存到Google表格
+ * 将问卷数据发送到邮箱并备份到表格
  */
 
 // 配置：收件人邮箱（修改为你的邮箱）
 const RECIPIENT_EMAIL = 'canav3ral@gmail.com';
+
+// 配置：表格名称
+const SHEET_NAME = '问卷数据';
 
 function doPost(e) {
   console.log('收到 POST 请求');
@@ -26,15 +29,40 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 发送邮件
-    sendQuestionnaireEmail(data);
-    console.log('邮件发送成功');
+    let emailSent = false;
+    let sheetSaved = false;
+
+    // 1. 保存到 Google Sheets（优先确保数据不丢失）
+    try {
+      saveToSheet(data);
+      console.log('✅ 数据已保存到表格');
+      sheetSaved = true;
+    } catch (sheetError) {
+      console.error('❌ 保存到表格失败:', sheetError);
+    }
+
+    // 2. 发送邮件（失败不影响整体结果）
+    try {
+      sendQuestionnaireEmail(data);
+      console.log('✅ 邮件发送成功');
+      emailSent = true;
+    } catch (emailError) {
+      console.error('❌ 发送邮件失败:', emailError);
+    }
 
     // 返回成功响应
+    const message = [];
+    if (sheetSaved) message.push('数据已保存到表格');
+    if (emailSent) message.push('邮件已发送');
+
     return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      message: '问卷数据已发送到邮箱',
-      timestamp: new Date().toISOString()
+      success: sheetSaved || emailSent,
+      message: message.length > 0 ? message.join('，') : '处理完成但有错误',
+      timestamp: new Date().toISOString(),
+      details: {
+        sheetSaved: sheetSaved,
+        emailSent: emailSent
+      }
     })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
@@ -47,6 +75,55 @@ function doPost(e) {
       timestamp: new Date().toISOString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+/**
+ * 保存数据到 Google Sheets
+ */
+function saveToSheet(data) {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+  // 如果表格不存在，创建它
+  if (!sheet) {
+    console.log('创建新表格:', SHEET_NAME);
+    sheet = spreadsheet.insertSheet(SHEET_NAME);
+    // 添加表头
+    const headers = [
+      '提交时间', '年龄', '职业', '压力程度', '概念理解',
+      '学习兴趣', '语言偏好', '功能偏好', '放松时长', '使用场景',
+      '价格接受度', '付费功能', '推荐意愿', '建议', '联系方式'
+    ];
+    sheet.appendRow(headers);
+    // 格式化表头
+    const headerRange = sheet.getRange(1, 1, 1, headers.length);
+    headerRange.setFontWeight('bold');
+    headerRange.setBackground('#4285f4');
+    headerRange.setFontColor('white');
+  }
+
+  // 准备数据行
+  const row = [
+    new Date(),                                    // 提交时间
+    data.age || '',                               // 年龄
+    data.occupation || '',                        // 职业
+    data.stressLevel || '',                       // 压力程度
+    data.conceptUnderstanding || '',              // 概念理解
+    data.learningInterest || '',                  // 学习兴趣
+    data.languagePreference || '',                // 语言偏好
+    formatArray(data.featurePreference, '; '),    // 功能偏好
+    data.relaxDuration || '',                     // 放松时长
+    formatArray(data.usageScenario, '; '),        // 使用场景
+    data.priceAcceptance || '',                   // 价格接受度
+    formatArray(data.paidFeatures, '; '),         // 付费功能
+    data.recommendation || '',                    // 推荐意愿
+    data.suggestions || '',                       // 建议
+    data.contact || ''                            // 联系方式
+  ];
+
+  // 添加数据行
+  sheet.appendRow(row);
+  console.log('✅ 已添加数据行到表格');
 }
 
 /**
