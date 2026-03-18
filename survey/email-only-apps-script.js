@@ -9,51 +9,52 @@
 const RECIPIENT_EMAIL = 'canav3ral@gmail.com';
 
 function doPost(e) {
+  console.log('收到 POST 请求');
+  console.log('请求内容:', e.postData.contents);
+
   try {
     // 解析提交的数据
     const data = JSON.parse(e.postData.contents);
+    console.log('解析后的数据:', JSON.stringify(data, null, 2));
+
+    // 验证必填字段
+    if (!data.age || !data.occupation) {
+      console.warn('缺少必填字段: age 或 occupation');
+      return ContentService.createTextOutput(JSON.stringify({
+        success: false,
+        message: '缺少必填字段: age 和 occupation 是必填的'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
 
     // 发送邮件
-    const result = sendQuestionnaireEmail(data);
+    sendQuestionnaireEmail(data);
+    console.log('邮件发送成功');
 
-    // 返回带CORS头的成功响应
-    return createCORSResponse({
+    // 返回成功响应
+    return ContentService.createTextOutput(JSON.stringify({
       success: true,
       message: '问卷数据已发送到邮箱',
       timestamp: new Date().toISOString()
-    });
+    })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    // 记录错误
     console.error('处理提交时出错:', error);
 
-    // 返回带CORS头的错误响应
-    return createCORSResponse({
+    // 返回错误响应
+    return ContentService.createTextOutput(JSON.stringify({
       success: false,
       message: '处理失败: ' + error.message,
       timestamp: new Date().toISOString()
-    });
+    })).setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-/**
- * 创建带CORS头的响应
- */
-function createCORSResponse(data) {
-  const output = ContentService
-    .createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-
-  return output;
 }
 
 /**
  * 处理 OPTIONS 预检请求（CORS）
  */
 function doOptions(e) {
-  return ContentService
-    .createTextOutput('')
-    .setMimeType(ContentService.MimeType.JSON);
+  console.log('收到 OPTIONS 预检请求');
+  return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.JSON);
 }
 
 /**
