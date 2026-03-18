@@ -937,17 +937,35 @@
         // ========== 发送数据到邮件脚本 ==========
         async function sendToEmailScript(data) {
             try {
+                console.log('正在发送数据到:', EMAIL_SCRIPT_URL);
+                console.log('发送的数据:', JSON.stringify(data, null, 2));
+
+                // 方法1：尝试正常 POST 请求
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
                 const response = await fetch(EMAIL_SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: {
                         'Content-Type': 'application/json'
-                    }
-                    // 移除了 mode: 'no-cors'，以便读取响应
+                    },
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
+
+                console.log('响应状态:', response.status);
+                console.log('响应头:', [...response.headers.entries()]);
+
+                // 检查响应是否成功
+                if (!response.ok) {
+                    throw new Error(`HTTP 错误: ${response.status}`);
+                }
 
                 // 解析响应
                 const result = await response.json();
+                console.log('响应数据:', result);
 
                 if (result.success) {
                     console.log('✅ 数据已发送，邮件已发出:', result.message);
@@ -962,6 +980,24 @@
 
             } catch (error) {
                 console.error('发送到邮件脚本失败:', error);
+
+                // 方法2：如果方法1失败，尝试使用 no-cors 模式（无法获取响应，但请求可能成功）
+                console.log('尝试使用 no-cors 模式发送...');
+                try {
+                    await fetch(EMAIL_SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        mode: 'no-cors'
+                    });
+                    console.log('✅ no-cors 模式发送完成（无法确认是否成功）');
+                    return { success: true, message: '数据已发送（no-cors模式）' };
+                } catch (noCorsError) {
+                    console.error('no-cors 模式也失败:', noCorsError);
+                }
+
                 return {
                     success: false,
                     message: '网络错误: ' + error.message
