@@ -41,6 +41,20 @@ function doPost(e) {
 }
 
 /**
+ * 处理 GET 请求 - 用于健康检查和直接访问
+ */
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      success: true,
+      message: '放马问卷邮件服务运行正常',
+      recipient: RECIPIENT_EMAIL,
+      timestamp: new Date().toISOString()
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
  * 发送问卷数据邮件
  */
 function sendQuestionnaireEmail(data) {
