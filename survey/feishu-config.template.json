@@ -1,0 +1,16 @@
+{
+  "feishu": {
+    "appId": "YOUR_FEISHU_APP_ID",
+    "appSecret": "YOUR_FEISHU_APP_SECRET",
+    "appToken": "YOUR_FEISHU_TABLE_APP_TOKEN",
+    "tableId": "YOUR_FEISHU_TABLE_ID"
+  },
+  "server": {
+    "port": 3000,
+    "corsOrigin": "*"
+  },
+  "storage": {
+    "enableLocalBackup": true,
+    "backupFilePath": "./data/backup.json"
+  }
+}

@@ -7,6 +7,9 @@
     "start": "node deploy-survey.js",
     "deploy": "node deploy-survey.js",
     "check": "node deploy-survey.js check",
+    "feishu:server": "node feishu-server.js",
+    "feishu:test": "node -e \"const {FeishuAPI} = require('./feishu-server'); console.log('飞书API模块加载成功')\"",
+    "feishu:config": "cp feishu-config.template.json feishu-config.json && echo '配置文件已创建，请编辑feishu-config.json填写你的飞书配置'",
     "test": "echo \"需要在浏览器中手动测试问卷功能\" && exit 0"
   },
   "keywords": [
@@ -17,7 +20,11 @@
   ],
   "author": "放马项目团队",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0"
+  },
   "engines": {
     "node": ">=14.0.0"
   }
